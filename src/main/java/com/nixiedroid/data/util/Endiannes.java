@@ -1,4 +1,4 @@
-package com.nixiedroid.util;
+package com.nixiedroid.data.util;
 
 /**
  *   32-bit integer 0x12345678

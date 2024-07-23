@@ -1,4 +1,6 @@
-package com.nixiedroid.util;
+package com.nixiedroid.data.util;
+
+import java.util.Arrays;
 
 @SuppressWarnings("unused")
 
@@ -8,23 +10,20 @@ public final class ByteArrays {
         throw new Error();
     }
 
-    public static void xor(final byte[] first, final byte[] second) {
-        if (first == null || second == null) throw new IllegalArgumentException("Null Array");
-        if (first.length != second.length) throw new IllegalArgumentException("Wrong Length");
-        final int length = first.length;
-        for (int i = 0; i < length; i++) first[i] ^= second[i];
+    public static void xor(final byte[] target, final byte[] mask) {
+        if (target == null || mask == null) throw new IllegalArgumentException("Null Array");
+        if (target.length != mask.length) throw new IllegalArgumentException("Wrong Length");
+        for (int i = 0; i < target.length; i++) target[i] ^= mask[i];
     }
 
     public static void reverse(final byte[] input) {
         if (input == null) throw new IllegalArgumentException();
-        int i = 0, j = input.length - 1;
-        byte tmp;
-        while (j > i) {
-            tmp = input[j];
-            input[j] = input[i];
-            input[i] = tmp;
-            j--;
-            i++;
+        int m = 0, k = input.length - 1;
+        while (k > m) {
+            input[k] ^= input[m]; //
+            input[m] ^= input[k]; // Swap bytes
+            input[k] ^= input[m]; //
+            k--; m++;
         }
     }
 
@@ -61,4 +60,8 @@ public final class ByteArrays {
         return result == 0;
     }
 
+
+    public static boolean equals(byte[] a, byte[] b){
+        return Arrays.equals(a,b);
+    }
 }

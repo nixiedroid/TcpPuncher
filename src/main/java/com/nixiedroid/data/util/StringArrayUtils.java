@@ -1,4 +1,4 @@
-package com.nixiedroid.util;
+package com.nixiedroid.data.util;
 
 import java.nio.charset.StandardCharsets;
 import java.util.StringJoiner;

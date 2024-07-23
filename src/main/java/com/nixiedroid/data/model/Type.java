@@ -1,6 +1,7 @@
-package com.nixiedroid.data.model.header;
+package com.nixiedroid.data.model;
 
 public enum Type {
+    INVALID,
     REGISTER,
     REGISTER_ACK,
     CONNECT,
@@ -8,3 +9,4 @@ public enum Type {
     NACK,
     MESSAGE
 }
+

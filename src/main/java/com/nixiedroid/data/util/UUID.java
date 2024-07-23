@@ -1,4 +1,4 @@
-package com.nixiedroid.util;
+package com.nixiedroid.data.util;
 
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class UUID  {
     }
 
     public static UUID cnv(String str){
-        return new UUID(convert(ByteArrayUtils.fromHexString(str)));
+        return new UUID(convert(StringArrayUtils.fromHexString(str)));
     }
 
     private static byte[] convert(byte[] uuid) {
@@ -47,7 +47,7 @@ public class UUID  {
 
     @Override
     public String toString() {
-        return "UUID{" + "uuid=" + ByteArrayUtils.toString(uuid) + '}';
+        return "UUID{" + "uuid=" + StringArrayUtils.toString(uuid) + '}';
     }
 
 
