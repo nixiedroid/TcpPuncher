@@ -1,19 +1,16 @@
 package com.nixiedroid.data.model;
 
-import com.nixiedroid.data.interfaces.Marshallable;
-import com.nixiedroid.data.util.ByteArrayConverter;
-import com.nixiedroid.data.util.ByteArrayConverterDefault;
-import com.nixiedroid.data.util.Endiannes;
+import com.nixiedroid.data.marshall.Marshallable;
+import com.nixiedroid.data.util.converter.Endianness;
+import com.nixiedroid.data.util.streams.PrimitiveInputStream;
+import com.nixiedroid.data.util.streams.PrimitiveOutputStream;
 
 import java.io.IOException;
 
 
 public abstract class AbstractParcel implements Marshallable {
 
-    public static final int SIZE = 4;
-    protected int pointer = 0;
     private static final short MAGIC = (short) 0xB10B;
-    protected final ByteArrayConverter converter = new ByteArrayConverterDefault();
     private short verMajor = 0;
     private short verMinor = 0;
     private short messageLen = 0;
@@ -27,8 +24,8 @@ public abstract class AbstractParcel implements Marshallable {
         this.messageType = builder.messageType;
     }
 
-    public AbstractParcel(byte[] data, int start) {
-        unmarshal(data, start);
+    public AbstractParcel(PrimitiveInputStream is) throws IOException {
+        unmarshal(is);
     }
 
     private AbstractParcel() {}
@@ -37,29 +34,35 @@ public abstract class AbstractParcel implements Marshallable {
         return magic == MAGIC;
     }
 
+
     @Override
-    public int marshal(byte[] data, int start) throws IOException {
-        int idx = 0;
-        if (!isMagicValid(converter.readShort(data, start, Endiannes.BIG))) {
-            throwIOException("Invalid magic");
-        }
-        idx += SHORT;
-
-
-        return idx;
+    public String toString() {
+        return "AbstractParcel{" +
+                "verMajor=" + verMajor +
+                ", verMinor=" + verMinor +
+                ", messageLen=" + messageLen +
+                ", messageType=" + messageType +
+                '}';
     }
 
     @Override
-    public int unmarshal(byte[] data, int start) {
-        int index = start;
-        this.verMajor = converter.readShort(data, index, Endiannes.BIG);
-        index += SHORT;
-        this.verMinor = converter.readShort(data, index, Endiannes.BIG);
-        index += SHORT;
-        this.messageLen = converter.readShort(data, index, Endiannes.BIG);
-        index += SHORT;
-        this.messageType = Type.values()[converter.readShort(data, index, Endiannes.BIG)];
-        return index + SHORT;
+    public void marshal(PrimitiveOutputStream os) throws IOException {
+        os.writeShort(MAGIC,Endianness.BIG_ENDIAN);
+        os.writeShort(verMajor,Endianness.BIG_ENDIAN);
+        os.writeShort(verMinor,Endianness.BIG_ENDIAN);
+        os.writeShort(messageLen,Endianness.BIG_ENDIAN);
+        os.writeShort((short) messageType.ordinal(),Endianness.BIG_ENDIAN);
+    }
+
+    @Override
+    public void unmarshal(PrimitiveInputStream is) throws IOException {
+        if (!isMagicValid(is.readShort(Endianness.BIG_ENDIAN))) {
+            throwIOException("Invalid magic");
+        }
+        this.verMajor = is.readShort(Endianness.BIG_ENDIAN);
+        this.verMinor = is.readShort( Endianness.BIG_ENDIAN);
+        this.messageLen = is.readShort(Endianness.BIG_ENDIAN);
+        this.messageType = Type.values()[is.readShort(Endianness.BIG_ENDIAN)];
     }
 
     public short getVerMajor() {
@@ -89,20 +92,24 @@ public abstract class AbstractParcel implements Marshallable {
 
         public abstract AbstractParcel build();
 
-        public void setVerMajor(short verMajor) {
+        public T setVerMajor(short verMajor) {
             this.verMajor = verMajor;
+            return self();
         }
 
-        public void setVerMinor(short verMinor) {
+        public T setVerMinor(short verMinor) {
             this.verMinor = verMinor;
+            return self();
         }
 
-        public void setMessageLen(short messageLen) {
+        public T setMessageLen(short messageLen) {
             this.messageLen = messageLen;
+            return self();
         }
 
-        public void setMessageType(Type messageType) {
+        public T setMessageType(Type messageType) {
             this.messageType = messageType;
+            return self();
         }
 
     }

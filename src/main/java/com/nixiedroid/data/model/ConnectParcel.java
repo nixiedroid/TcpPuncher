@@ -1,6 +1,7 @@
 package com.nixiedroid.data.model;
 
-import com.nixiedroid.data.util.Endiannes;
+import com.nixiedroid.data.util.streams.PrimitiveInputStream;
+import com.nixiedroid.data.util.streams.PrimitiveOutputStream;
 
 import java.io.IOException;
 
@@ -9,43 +10,53 @@ public class ConnectParcel extends AbstractParcel {
     private int id;
     private short value;
 
-    public ConnectParcel(byte[] data, int start) {
-        super(data, start);
-    }
-
-    public ConnectParcel(Builder builder){
+    private ConnectParcel(Builder builder) {
         super(builder);
         this.id = builder.id;
+        this.value = builder.value;
+    }
+
+    public ConnectParcel(AbstractParcel.Builder<?> builder) {
+        super(builder);
+    }
+
+    public ConnectParcel(PrimitiveInputStream is) throws IOException {
+        super(is);
     }
 
     @Override
-    public int size() {
-        return 0;
+    public void marshal(PrimitiveOutputStream os) throws IOException {
+        super.marshal(os);
+        os.writeInteger(id);
+        os.writeShort(value);
     }
 
     @Override
-    public int marshal(byte[] data, int start) throws IOException {
-        int index = super.marshal(data,start);
-        converter.writeInteger(data, index, id, Endiannes.BIG);
-        index += INTEGER;
-        converter.writeShort(data, index, value, Endiannes.BIG);
-        return index + SHORT;
+    public void unmarshal(PrimitiveInputStream is) throws IOException {
+        super.unmarshal(is);
+        id = is.readInteger();
+        value = is.readShort();
     }
 
     @Override
-    public int unmarshal(byte[] data, int start) {
-        int index = super.unmarshal(data,start);
-        this.id = converter.readInteger(data, index, Endiannes.BIG);
-        index += INTEGER;
-        this.value = converter.readShort(data, index, Endiannes.BIG);
-        return index + SHORT;
+    public String toString() {
+        return super.toString() + "\nConnectParcel{" +
+                "id=" + id +
+                ", value=" + value +
+                '}';
     }
 
     public static class Builder extends AbstractParcel.Builder<Builder> {
         private int id;
+        private short value;
 
         public Builder setId(int id) {
             this.id = id;
+            return self();
+        }
+
+        public Builder setValue(short value) {
+            this.value = value;
             return self();
         }
 

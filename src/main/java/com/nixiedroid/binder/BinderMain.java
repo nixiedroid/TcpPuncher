@@ -21,6 +21,7 @@ public class BinderMain {
                 clientSocket.setSoTimeout(3500);
                 System.out.println(clientSocket);
                 new Thread(new ClientThread(clientSocket)).start();
+                System.out.println("Thread Created");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

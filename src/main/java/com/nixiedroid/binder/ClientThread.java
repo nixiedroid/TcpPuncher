@@ -1,7 +1,12 @@
 package com.nixiedroid.binder;
 
+import com.nixiedroid.data.model.ConnectParcel;
+import com.nixiedroid.data.util.streams.PrimitiveInputStream;
+import com.nixiedroid.data.util.streams.PrimitiveOutputStream;
+
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class ClientThread implements Runnable {
 
@@ -13,20 +18,14 @@ public class ClientThread implements Runnable {
 
     @Override
     public void run() {
-        try (BufferedInputStream iStream = new BufferedInputStream(socket.getInputStream());
-             BufferedOutputStream oStream = new BufferedOutputStream(System.out)) {
+        try (
+                PrimitiveInputStream iStream = new PrimitiveInputStream(socket.getInputStream());
+                PrimitiveOutputStream oStream = new PrimitiveOutputStream(socket.getOutputStream())
+        ) {
+            ConnectParcel parcel = new ConnectParcel(iStream);
+            System.out.println(parcel);
 
-            int ch;
-            Reader r = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            while ((ch =  r.read())!=-1){
-                System.out.print((char) ch);
-            }
-
-//            int length = iStream.read();
-//            byte[] dataReceived = readFully(length, iStream);
-//            String message = new String(dataReceived);
-//            System.out.println("Received message: " + message);
-            socket.close();
+           socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
