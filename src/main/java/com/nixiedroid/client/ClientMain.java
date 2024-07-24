@@ -5,8 +5,6 @@ import com.nixiedroid.data.model.Type;
 import com.nixiedroid.data.util.streams.PrimitiveInputStream;
 import com.nixiedroid.data.util.streams.PrimitiveOutputStream;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
