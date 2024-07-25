@@ -1,6 +1,6 @@
 package com.nixiedroid.data.model;
 
-public enum Type {
+public enum ParcelType {
     INVALID,
     REGISTER,
     REGISTER_ACK,

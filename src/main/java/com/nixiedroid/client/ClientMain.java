@@ -1,17 +1,17 @@
 package com.nixiedroid.client;
 
-import com.nixiedroid.data.model.ConnectParcel;
-import com.nixiedroid.data.model.Type;
-import com.nixiedroid.data.util.streams.PrimitiveInputStream;
-import com.nixiedroid.data.util.streams.PrimitiveOutputStream;
+import com.nixiedroid.data.builders.ParcelFactoryImpl;
+import com.nixiedroid.data.model.Parcel;
+import com.nixiedroid.data.model.ParcelType;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 public class ClientMain {
-    private static final int BYTE = 1;
 
     final static InetSocketAddress address = new InetSocketAddress("localhost", 8088);
 
@@ -19,19 +19,14 @@ public class ClientMain {
     public static void main(String[] args) {
         try (
                 Socket socket = setupSocket();
-                PrimitiveInputStream iStream = new PrimitiveInputStream(socket.getInputStream());
-                PrimitiveOutputStream oStream = new PrimitiveOutputStream(socket.getOutputStream())
+                DataInputStream iStream = new DataInputStream(socket.getInputStream());
+                DataOutputStream oStream = new DataOutputStream(socket.getOutputStream())
         ) {
-            ConnectParcel parcel = new ConnectParcel.Builder()
-                    .setId(5)
-                    .setValue((short) 0xFFFF)
-                    .setVerMinor((short) 99)
-                    .setMessageLen((short) 2)
-                    .setMessageType(Type.CONNECT_ACK)
-                    .setVerMajor((short) 3).build();
+            ParcelFactoryImpl i = new ParcelFactoryImpl();
+            Parcel parcel =  i.make(ParcelType.CONNECT);
             parcel.marshal(oStream);
             System.out.println("Data sent to server.");
-            int read=0;
+            int read;
             while ((read = iStream.read())!=-1){
                 System.out.println(read);
             }
