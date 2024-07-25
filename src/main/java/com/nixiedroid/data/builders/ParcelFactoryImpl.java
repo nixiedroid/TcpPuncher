@@ -1,9 +1,9 @@
 package com.nixiedroid.data.builders;
 
-import com.nixiedroid.data.model.ConnectParcel;
-import com.nixiedroid.data.model.InvalidParcel;
-import com.nixiedroid.data.model.Parcel;
-import com.nixiedroid.data.model.ParcelType;
+import com.nixiedroid.data.model.*;
+
+import java.io.DataInputStream;
+import java.io.IOException;
 
 public class ParcelFactoryImpl implements ParcelFactory{
     @Override
@@ -20,5 +20,12 @@ public class ParcelFactoryImpl implements ParcelFactory{
                 break;
         }
         return p;
+    }
+
+    @Override
+    public Parcel unmarshall(DataInputStream is) throws IOException {
+        Parcel p = new HeaderV1_1(is);
+
+        return null;
     }
 }

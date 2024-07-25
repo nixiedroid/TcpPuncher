@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public abstract class HeaderV1_1 extends Parcel {
+public class HeaderV1_1 extends Parcel {
     private short verMajor = 1;
     private short verMinor = 1;
     private short messageLen = 0;
